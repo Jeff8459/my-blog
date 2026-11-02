@@ -1,0 +1,46 @@
+---
+import { categories } from '../config/taxonomy';
+import { topics } from '../config/topics';
+import { site } from '../config/site';
+import { getPublishedPosts } from '../lib/content';
+const posts = await getPublishedPosts();
+const lastPost = posts[0];
+---
+<div class="aside-section">
+	<p class="aside-label">KNOWLEDGE MAP</p>
+	<h2>知识导航</h2>
+	<p class="aside-intro">按主题浏览这个知识空间。</p>
+	<nav class="aside-list" aria-label="知识导航">
+		{categories.map((category) => {
+			const count = posts.filter((post) => post.data.category === category.slug).length;
+			return <a href={`/categories/${category.slug}/`}><span>{category.name}</span><span>{count}</span></a>;
+		})}
+	</nav>
+</div>
+<div class="aside-section">
+	<p class="aside-label">SITE</p>
+	<h2>关于这个空间</h2>
+	<p class="aside-intro">{site.author.bio}</p>
+	<div class="site-facts">
+		<div><span>笔记</span><strong>{posts.length}</strong></div>
+		<div><span>专题</span><strong>{topics.length}</strong></div>
+		<div><span>更新</span><strong>{lastPost ? new Intl.DateTimeFormat('zh-CN', { month: '2-digit', day: '2-digit' }).format(lastPost.data.updatedDate ?? lastPost.data.pubDate) : '—'}</strong></div>
+	</div>
+	<a class="aside-link" href="/about/">更多关于本站 <span aria-hidden="true">→</span></a>
+</div>
+<style>
+	.aside-section + .aside-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+	.aside-label { color: var(--faint); font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .12em; }
+	h2 { margin-top: 4px; font-size: 13px; font-weight: 600; }
+	.aside-intro { margin-top: 6px; color: var(--muted); font-size: 11.5px; line-height: 1.7; }
+	.aside-list { margin-top: 10px; }
+	.aside-list a { display: flex; justify-content: space-between; align-items: center; min-height: 28px; color: var(--muted); font-size: 12px; text-decoration: none; }
+	.aside-list a:hover { color: var(--accent); }
+	.aside-list a span:last-child { color: var(--faint); font-family: var(--font-mono); font-size: 10px; }
+	.site-facts { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 12px; border-block: 1px solid var(--line); }
+	.site-facts div { display: grid; gap: 1px; padding: 8px 0; }
+	.site-facts span { color: var(--faint); font-size: 9.5px; }
+	.site-facts strong { font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+	.aside-link { display: inline-flex; gap: 6px; margin-top: 12px; color: var(--accent); font-size: 11.5px; text-decoration: none; }
+	.aside-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+</style>

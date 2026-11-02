@@ -1,16 +1,16 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import ArticleRow from '../../../components/ArticleRow.astro';
+import PostList from '../../../components/PostList.astro';
 import { tags } from '../../../config/taxonomy';
 import { getPostsByTag } from '../../../lib/content';
 export function getStaticPaths() { return tags.map((tag) => ({ params: { slug: tag.slug }, props: { tag } })); }
 const { tag } = Astro.props;
 const posts = await getPostsByTag(tag.slug);
 ---
-<BaseLayout title={`标签：${tag.name}`} description={`标签“${tag.name}”下的 ${posts.length} 篇文章。`}>
-	<header class="page-hero shell"><div><p class="eyebrow">TAG / {tag.slug.toUpperCase()}</p><h1>#{tag.name}</h1></div><div><span class="page-count">{String(posts.length).padStart(2, '0')} ARTICLES</span><p>通过标签连接不同分类中的相关内容。</p></div></header>
-	<section class="shell tag-posts" aria-label={`${tag.name}标签文章`}>
-		{posts.length ? posts.map((post, index) => <ArticleRow post={post} index={index} />) : <div class="empty-state"><h2>这个标签还没有文章</h2><a href="/tags/">查看全部标签</a></div>}
+<BaseLayout title={`标签：${tag.name}`} description={`标签“${tag.name}”下的 ${posts.length} 篇笔记。`}>
+	<header class="page-header"><p class="eyebrow">TAG / {tag.slug.toUpperCase()}</p><h1>#{tag.name}</h1><p class="description">通过标签连接不同分类中的相关内容。</p><div class="meta-line"><span>{posts.length} 篇笔记</span><span>·</span><a href="/tags/">全部标签</a></div></header>
+	<section class="tag-posts" aria-label={`${tag.name}标签文章`}>
+		<PostList posts={posts} emptyTitle="这个标签还没有笔记" emptyText="可以查看全部标签，或浏览其他分类。" />
 	</section>
 </BaseLayout>
-<style>.tag-posts { padding-top: 2rem; }</style>
+<style>.tag-posts { margin-top: 4px; } .meta-line a { color: var(--muted); text-decoration: none; } .meta-line a:hover { color: var(--accent); }</style>

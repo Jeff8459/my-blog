@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import ArticleRow from '../../../components/ArticleRow.astro';
+import PostList from '../../../components/PostList.astro';
 import CategoryNavigation from '../../../components/CategoryNavigation.astro';
 import { categories } from '../../../config/taxonomy';
 import { getPostsByCategory, getPublishedPosts } from '../../../lib/content';
@@ -9,11 +9,11 @@ const { category } = Astro.props;
 const posts = await getPublishedPosts();
 const categoryPosts = await getPostsByCategory(category.slug, posts);
 ---
-<BaseLayout title={category.name} description={`${category.description}共 ${categoryPosts.length} 篇文章。`}>
-	<header class="page-hero shell"><div><p class="eyebrow">SECTION / {category.slug.toUpperCase()}</p><h1>{category.name}</h1></div><div><span class="page-count">{String(categoryPosts.length).padStart(2, '0')} ARTICLES</span><p>{category.description}</p></div></header>
-	<div class="shell category-controls"><CategoryNavigation /></div>
-	<section class="shell category-posts" aria-label={`${category.name}文章`}>
-		{categoryPosts.length ? categoryPosts.map((post, index) => <ArticleRow post={post} index={index} />) : <div class="empty-state"><h2>这个分类还没有文章</h2><p>可以先去文章归档，看看其他内容。</p><a href="/blog/">浏览全部文章</a></div>}
+<BaseLayout title={category.name} description={`${category.description}共 ${categoryPosts.length} 篇已发布笔记。`}>
+	<header class="page-header"><p class="eyebrow">SECTION / {category.slug.toUpperCase()}</p><h1>{category.name}</h1><p class="description">{category.description}</p><div class="meta-line"><span>{categoryPosts.length} 篇笔记</span><span>·</span><a href="/categories/">全部分类</a></div></header>
+	<CategoryNavigation />
+	<section class="category-posts" aria-label={`${category.name}文章`}>
+		<PostList posts={categoryPosts} emptyTitle="这个分类还没有笔记" emptyText="可以先浏览全部文章，或从左侧切换其他分类。" />
 	</section>
 </BaseLayout>
-<style>.category-controls { margin-top: 2rem; } .category-posts { padding-top: 1.5rem; } .empty-state a { display: inline-block; margin-top: 1rem; }</style>
+<style>.category-posts { margin-top: 4px; } .meta-line a { color: var(--muted); text-decoration: none; } .meta-line a:hover { color: var(--accent); }</style>

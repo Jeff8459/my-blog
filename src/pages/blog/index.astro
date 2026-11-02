@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ArticleRow from '../../components/ArticleRow.astro';
+import PostList from '../../components/PostList.astro';
 import CategoryNavigation from '../../components/CategoryNavigation.astro';
 import Pagination from '../../components/Pagination.astro';
 import { getPublishedPosts, paginate } from '../../lib/content';
@@ -8,15 +8,12 @@ import { site } from '../../config/site';
 const posts = await getPublishedPosts();
 const page = paginate(posts, 1, site.postsPerPage);
 ---
-<BaseLayout title="文章归档" description={`全部文章，共 ${posts.length} 篇。按时间倒序阅读技术、管理、阅读与生活记录。`}>
-	<header class="page-hero shell"><div><p class="eyebrow">THE ARCHIVE</p><h1>文章归档</h1></div><div><span class="page-count">{String(posts.length).padStart(2, '0')} ARTICLES</span><p>按时间顺序保存每一次思考。也可以从分类进入，沿着感兴趣的主题继续阅读。</p></div></header>
-	<div class="shell archive-controls"><CategoryNavigation /></div>
-	<section class="shell archive-list" aria-label="全部文章">
-		{page.items.length ? page.items.map((post, index) => <ArticleRow post={post} index={(page.page - 1) * site.postsPerPage + index} />) : <div class="empty-state"><h2>还没有已发布文章</h2><p>新增 Markdown 文章后，这里会自动更新。</p></div>}
+<BaseLayout title="全部文章" description={`全部已发布笔记，共 ${posts.length} 篇。按时间倒序浏览。`}>
+	<header class="page-header"><p class="eyebrow">NOTES / ALL</p><h1>全部文章</h1><p class="description">按发布时间倒序排列。分类负责长期归档，标签连接跨主题的相关内容。</p><div class="meta-line"><span>{posts.length} 篇已发布</span><span>·</span><span>第 {page.page} / {page.pageCount} 页</span></div></header>
+	<CategoryNavigation />
+	<section class="archive-list" aria-label="全部文章">
+		<PostList posts={page.items} emptyTitle="还没有已发布文章" emptyText="新增 Markdown 后，内容会自动出现在这里。" />
 		<Pagination page={page.page} pageCount={page.pageCount} />
 	</section>
 </BaseLayout>
-<style>
-	.archive-controls { margin-top: 2rem; }
-	.archive-list { padding-top: 1.5rem; }
-</style>
+<style>.archive-list { margin-top: 4px; }</style>

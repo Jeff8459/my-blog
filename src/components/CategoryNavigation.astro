@@ -2,19 +2,20 @@
 import { categories } from '../config/taxonomy';
 import { getPublishedPosts } from '../lib/content';
 const posts = await getPublishedPosts();
+const path = Astro.url.pathname;
 ---
-<nav class="category-nav" aria-label="文章分类">
+<nav class="category-pills" aria-label="按分类筛选">
+	<a href="/blog/" aria-current={path === '/blog/' || path.startsWith('/blog/page/') ? 'page' : undefined}><span>全部</span><small>{posts.length}</small></a>
 	{categories.map((category) => {
 		const count = posts.filter((post) => post.data.category === category.slug).length;
-		return <a href={`/categories/${category.slug}/`}><span>{category.name}</span><small>{String(count).padStart(2, '0')}</small></a>;
+		return <a href={`/categories/${category.slug}/`} aria-current={path.startsWith(`/categories/${category.slug}/`) ? 'page' : undefined}><span>{category.name}</span><small>{count}</small></a>;
 	})}
 </nav>
 <style>
-	.category-nav { display: flex; flex-wrap: wrap; border-block: 1px solid var(--line); }
-	a { display: flex; align-items: center; gap: .6rem; min-height: 52px; padding: 0 1.3rem; border-right: 1px solid var(--line); color: var(--muted); font-size: .78rem; text-decoration: none; }
-	a:first-child { padding-left: 0; }
-	a:last-child { border-right: 0; }
-	a:hover { color: var(--accent); }
-	small { color: var(--muted); font-family: var(--font-serif); font-size: .62rem; }
-	@media (max-width: 600px) { .category-nav { display: grid; grid-template-columns: repeat(2, 1fr); } a, a:first-child { padding: 0 .5rem; border-right: 0; border-bottom: 1px solid var(--line); } a:nth-last-child(-n+2) { border-bottom: 0; } }
+	.category-pills { display: flex; flex-wrap: wrap; gap: 4px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+	a { display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 0 8px; border-radius: 4px; color: var(--muted); font-size: 11px; text-decoration: none; }
+	a:hover { background: var(--hover); color: var(--text); }
+	a[aria-current="page"] { background: var(--active); color: var(--accent); }
+	small { color: var(--faint); font-family: var(--font-mono); font-size: 9px; }
+	a[aria-current="page"] small { color: var(--accent); }
 </style>

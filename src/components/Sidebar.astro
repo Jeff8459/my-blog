@@ -1,0 +1,81 @@
+---
+import { categories } from '../config/taxonomy';
+import { getPublishedPosts } from '../lib/content';
+const posts = await getPublishedPosts();
+const path = Astro.url.pathname;
+const isActive = (href: string) => href === '/' ? path === '/' : path.startsWith(href);
+const nav = [
+	{ href: '/', label: '首页', icon: 'home' },
+	{ href: '/blog/', label: '全部文章', icon: 'notes' },
+	{ href: '/search/', label: '搜索', icon: 'search' },
+	{ href: '/topics/', label: '专题', icon: 'layers' },
+	{ href: '/about/', label: '关于', icon: 'info' },
+] as const;
+---
+<aside id="garden-sidebar" class="sidebar" data-sidebar aria-label="知识导航" data-pagefind-ignore>
+	<div class="sidebar-top">
+		<p class="sidebar-label">WORKSPACE</p>
+		<button class="sidebar-close" type="button" data-sidebar-close aria-label="关闭导航">×</button>
+	</div>
+	<nav class="main-nav" aria-label="主导航">
+		{nav.map((item) => <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+			<svg viewBox="0 0 20 20" aria-hidden="true">
+				{item.icon === 'home' && <path d="M3 9.5 10 3l7 6.5V17h-5v-4H8v4H3Z"/>}
+				{item.icon === 'notes' && <><path d="M5 3h8l3 3v11H5Z"/><path d="M8 8h5M8 11h5M8 14h3"/></>}
+				{item.icon === 'search' && <><circle cx="9" cy="9" r="5"/><path d="m12.8 12.8 3.2 3.2"/></>}
+				{item.icon === 'layers' && <><path d="m3 7 7-4 7 4-7 4Z"/><path d="m3 11 7 4 7-4M3 15l7 4 7-4"/></>}
+				{item.icon === 'info' && <><circle cx="10" cy="10" r="7"/><path d="M10 9v5M10 6.5v.1"/></>}
+			</svg>
+			<span>{item.label}</span>
+			{item.href === '/search/' && <kbd>⌘K</kbd>}
+		</a>)}
+	</nav>
+	<details class="category-tree" open>
+		<summary>内容分类<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m5 6 3 3 3-3"/></svg></summary>
+		<nav aria-label="内容分类">
+			{categories.map((category) => {
+				const count = posts.filter((post) => post.data.category === category.slug).length;
+				return <a href={`/categories/${category.slug}/`} aria-current={path.startsWith(`/categories/${category.slug}/`) ? 'page' : undefined}><span>{category.name}</span><span class="count">{count}</span></a>;
+			})}
+		</nav>
+	</details>
+	<div class="sidebar-foot">
+		<p>{posts.length} 篇已发布笔记</p>
+		<div><a href="/rss.xml">RSS</a><a href="/tags/">标签</a><a href="/categories/">分类</a></div>
+	</div>
+</aside>
+<div class="sidebar-backdrop" data-sidebar-close hidden></div>
+<style>
+	.sidebar { position: sticky; z-index: 40; top: var(--header-height); display: flex; flex-direction: column; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); padding: 16px 12px 20px; overflow-y: auto; border-right: 1px solid var(--line); background: var(--sidebar); }
+	.sidebar-top { display: flex; align-items: center; justify-content: space-between; min-height: 22px; padding: 0 8px; }
+	.sidebar-label { color: var(--faint); font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; }
+	.sidebar-close { display: none; width: 30px; height: 30px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+	.main-nav { display: grid; gap: 1px; margin-top: 7px; }
+	.main-nav a { display: flex; align-items: center; gap: 9px; height: 34px; padding: 0 8px; border-radius: 5px; color: var(--muted); font-size: 13px; text-decoration: none; }
+	.main-nav a:hover { background: var(--hover); color: var(--text); }
+	.main-nav a[aria-current="page"] { background: var(--active); color: var(--text); font-weight: 550; }
+	.main-nav svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
+	.main-nav kbd { min-width: 28px; margin-left: auto; padding: 1px 4px; border: 1px solid var(--line); border-radius: 3px; color: var(--faint); font-family: var(--font-mono); font-size: 9px; text-align: center; }
+	.category-tree { margin-top: 18px; }
+	.category-tree summary { display: flex; align-items: center; justify-content: space-between; height: 30px; padding: 0 8px; color: var(--faint); font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; cursor: pointer; list-style: none; text-transform: uppercase; }
+	.category-tree summary::-webkit-details-marker { display: none; }
+	.category-tree summary svg { width: 12px; fill: none; stroke: currentColor; transition: transform .15s; }
+	.category-tree:not([open]) summary svg { transform: rotate(-90deg); }
+	.category-tree nav { display: grid; gap: 1px; margin-top: 2px; }
+	.category-tree nav a { display: flex; align-items: center; justify-content: space-between; height: 32px; padding: 0 8px 0 30px; border-radius: 5px; color: var(--muted); font-size: 12.5px; text-decoration: none; }
+	.category-tree nav a:hover, .category-tree nav a[aria-current="page"] { background: var(--hover); color: var(--text); }
+	.category-tree nav a[aria-current="page"] { font-weight: 550; }
+	.count { color: var(--faint); font-family: var(--font-mono); font-size: 10px; }
+	.sidebar-foot { margin-top: auto; padding: 16px 8px 0; border-top: 1px solid var(--line); }
+	.sidebar-foot p { color: var(--faint); font-size: 10.5px; }
+	.sidebar-foot div { display: flex; gap: 12px; margin-top: 7px; }
+	.sidebar-foot a { color: var(--muted); font-size: 11px; text-decoration: none; }
+	.sidebar-foot a:hover { color: var(--accent); }
+	@media (max-width: 1024px) {
+		.sidebar { position: fixed; top: var(--header-height); bottom: 0; left: 0; width: min(260px, 86vw); height: auto; transform: translateX(-100%); transition: transform .2s ease; box-shadow: 12px 0 32px rgb(0 0 0 / 10%); }
+		.sidebar[data-open] { transform: translateX(0); }
+		.sidebar-close { display: block; }
+		.sidebar-backdrop { position: fixed; z-index: 35; inset: var(--header-height) 0 0; background: rgb(0 0 0 / 28%); }
+		.sidebar-backdrop[hidden] { display: none; }
+	}
+</style>

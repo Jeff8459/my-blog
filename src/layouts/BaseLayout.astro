@@ -2,7 +2,9 @@
 import type { ImageMetadata } from 'astro';
 import SEOHead from '../components/SEOHead.astro';
 import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
 import Footer from '../components/Footer.astro';
+import CommandSearch from '../components/CommandSearch.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -17,6 +19,7 @@ interface Props {
 }
 
 const { pagefind = false, ...seo } = Astro.props;
+const hasAside = Astro.slots.has('aside');
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -38,9 +41,22 @@ const { pagefind = false, ...seo } = Astro.props;
 	<body>
 		<a class="skip-link" href="#main-content">跳到主要内容</a>
 		<Header />
-		<main id="main-content" data-pagefind-body={pagefind ? true : undefined} data-pagefind-ignore={!pagefind ? true : undefined}>
-			<slot />
-		</main>
-		<Footer />
+		<div class="app-layout">
+			<Sidebar />
+			<div class="main-column">
+				<main id="main-content" data-pagefind-body={pagefind ? true : undefined} data-pagefind-ignore={!pagefind ? true : undefined}>
+					<div class="content-shell">
+						<div class:list={['content-grid', { 'no-aside': !hasAside }]}>
+							<div class="content-main">
+								<slot />
+								<Footer />
+							</div>
+							{hasAside && <aside class="context-aside" aria-label="页面上下文" data-pagefind-ignore><slot name="aside" /></aside>}
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+		<CommandSearch />
 	</body>
 </html>

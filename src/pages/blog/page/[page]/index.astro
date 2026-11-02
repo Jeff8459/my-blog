@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
-import ArticleRow from '../../../../components/ArticleRow.astro';
+import PostList from '../../../../components/PostList.astro';
 import CategoryNavigation from '../../../../components/CategoryNavigation.astro';
 import Pagination from '../../../../components/Pagination.astro';
 import { getPublishedPosts, paginate } from '../../../../lib/content';
@@ -15,12 +15,12 @@ const posts = await getPublishedPosts();
 const pageNumber = Number(Astro.params.page);
 const page = paginate(posts, pageNumber, site.postsPerPage);
 ---
-<BaseLayout title={`文章归档 · 第 ${pageNumber} 页`} description={`文章归档第 ${pageNumber} 页，共 ${posts.length} 篇文章。`}>
-	<header class="page-hero shell"><div><p class="eyebrow">THE ARCHIVE</p><h1>文章归档</h1></div><div><span class="page-count">PAGE {String(pageNumber).padStart(2, '0')}</span><p>按时间顺序保存每一次思考。</p></div></header>
-	<div class="shell archive-controls"><CategoryNavigation /></div>
-	<section class="shell archive-list" aria-label={`文章第 ${pageNumber} 页`}>
-		{page.items.map((post, index) => <ArticleRow post={post} index={(page.page - 1) * site.postsPerPage + index} />)}
+<BaseLayout title={`全部文章 · 第 ${pageNumber} 页`} description={`全部已发布笔记第 ${pageNumber} 页，共 ${posts.length} 篇。`}>
+	<header class="page-header"><p class="eyebrow">NOTES / ALL</p><h1>全部文章</h1><p class="description">按发布时间倒序排列。</p><div class="meta-line"><span>{posts.length} 篇已发布</span><span>·</span><span>第 {page.page} / {page.pageCount} 页</span></div></header>
+	<CategoryNavigation />
+	<section class="archive-list" aria-label={`文章第 ${pageNumber} 页`}>
+		<PostList posts={page.items} />
 		<Pagination page={page.page} pageCount={page.pageCount} />
 	</section>
 </BaseLayout>
-<style>.archive-controls { margin-top: 2rem; } .archive-list { padding-top: 1.5rem; }</style>
+<style>.archive-list { margin-top: 4px; }</style>

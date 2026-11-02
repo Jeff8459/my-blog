@@ -1,0 +1,121 @@
+<dialog id="command-search" class="command-dialog" aria-labelledby="command-title" data-command-search>
+	<div class="command-panel">
+		<form class="command-form" action="/search/" method="get" data-command-form>
+			<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="m13 13 4 4"/></svg>
+			<label id="command-title" class="sr-only" for="command-input">搜索知识库</label>
+			<input id="command-input" name="q" type="search" placeholder="搜索笔记、标签或关键词…" autocomplete="off" spellcheck="false" />
+			<kbd>ESC</kbd>
+			<button class="command-close" type="button" data-command-close aria-label="关闭搜索">×</button>
+		</form>
+		<div class="command-status" role="status" aria-live="polite" data-command-status>输入关键词，在已发布笔记中搜索。</div>
+		<div class="command-results" data-command-results></div>
+		<div class="command-footer"><span><kbd>↑</kbd><kbd>↓</kbd> 浏览</span><span><kbd>↵</kbd> 查看全部</span><a href="/search/">高级搜索</a></div>
+	</div>
+</dialog>
+<script>
+	interface PagefindData { url: string; excerpt: string; meta: { title?: string }; }
+	interface PagefindResult { data: () => Promise<PagefindData>; }
+	interface PagefindModule { init: () => Promise<void>; search: (query: string) => Promise<{ results: PagefindResult[] }>; }
+	const dialog = document.querySelector<HTMLDialogElement>('[data-command-search]')!;
+	const form = dialog.querySelector<HTMLFormElement>('[data-command-form]')!;
+	const input = dialog.querySelector<HTMLInputElement>('#command-input')!;
+	const status = dialog.querySelector<HTMLElement>('[data-command-status]')!;
+	const results = dialog.querySelector<HTMLElement>('[data-command-results]')!;
+	const pagefindPath = '/pagefind/pagefind.js';
+	let engine: PagefindModule | undefined;
+	let sequence = 0;
+	let timer: ReturnType<typeof setTimeout>;
+	const load = async () => {
+		if (!engine) {
+			engine = await import(/* @vite-ignore */ pagefindPath) as PagefindModule;
+			await engine.init();
+		}
+		return engine;
+	};
+	const render = async (query: string) => {
+		const current = ++sequence;
+		clearTimeout(timer);
+		if (!query.trim()) {
+			results.replaceChildren();
+			status.textContent = '输入关键词，在已发布笔记中搜索。';
+			return;
+		}
+		status.textContent = '搜索中…';
+		try {
+			const search = await (await load()).search(query.trim());
+			if (current !== sequence) return;
+			const data = await Promise.all(search.results.slice(0, 7).map((result) => result.data()));
+			if (current !== sequence) return;
+			results.replaceChildren();
+			if (!data.length) {
+				status.textContent = `没有找到与「${query.trim()}」相关的笔记。`;
+				return;
+			}
+			status.textContent = `找到 ${search.results.length} 篇相关笔记`;
+			for (const item of data) {
+				const link = document.createElement('a');
+				link.href = item.url;
+				const title = document.createElement('strong'); title.textContent = item.meta.title || '未命名笔记';
+				const excerpt = document.createElement('span'); excerpt.innerHTML = item.excerpt;
+				link.append(title, excerpt);
+				link.addEventListener('click', () => dialog.close());
+				results.appendChild(link);
+			}
+		} catch {
+			if (current !== sequence) return;
+			status.textContent = '搜索索引尚未生成，请使用生产构建预览。';
+		}
+	};
+	const open = () => {
+		if (!dialog.open) dialog.showModal();
+		input.focus();
+		load().catch(() => undefined);
+	};
+	document.querySelectorAll('[data-search-open]').forEach((button) => button.addEventListener('click', open));
+	dialog.querySelector('[data-command-close]')?.addEventListener('click', () => dialog.close());
+	dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+	input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => render(input.value), 180); });
+	form.addEventListener('submit', (event) => {
+		event.preventDefault();
+		location.href = `/search/?q=${encodeURIComponent(input.value.trim())}`;
+	});
+	document.addEventListener('keydown', (event) => {
+		const target = event.target as HTMLElement;
+		const typing = ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable;
+		if (event.key === 'Escape' && dialog.open) { event.preventDefault(); dialog.close(); }
+		else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); open(); }
+		else if (event.key === '/' && !typing && !dialog.open && !location.pathname.startsWith('/search')) { event.preventDefault(); open(); }
+		else if (dialog.open && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+			const links = [...results.querySelectorAll<HTMLAnchorElement>('a')];
+			if (!links.length) return;
+			event.preventDefault();
+			const index = links.indexOf(document.activeElement as HTMLAnchorElement);
+			const next = event.key === 'ArrowDown' ? Math.min(links.length - 1, index + 1) : Math.max(0, index - 1);
+			links[next]?.focus();
+		}
+	});
+</script>
+<style>
+	.command-dialog { width: min(620px, calc(100vw - 28px)); max-height: min(620px, calc(100vh - 80px)); padding: 0; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); color: var(--text); box-shadow: 0 20px 60px rgb(0 0 0 / 18%); }
+	.command-dialog::backdrop { background: rgb(16 24 40 / 34%); }
+	.command-panel { display: flex; flex-direction: column; max-height: inherit; }
+	.command-form { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 9px; min-height: 50px; padding: 0 12px; border-bottom: 1px solid var(--line); }
+	.command-form > svg { width: 17px; height: 17px; fill: none; stroke: var(--muted); stroke-width: 1.5; }
+	.command-form input { width: 100%; height: 48px; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 14px; }
+	.command-form input::placeholder { color: var(--faint); }
+	.command-form kbd, .command-footer kbd { padding: 1px 4px; border: 1px solid var(--line); border-radius: 3px; color: var(--faint); font-family: var(--font-mono); font-size: 8.5px; }
+	.command-close { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 1px solid var(--line); border-radius: 3px; background: transparent; color: var(--muted); cursor: pointer; }
+	.command-status { padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--faint); font-size: 10.5px; }
+	.command-results { overflow-y: auto; }
+	.command-results:empty { display: none; }
+	.command-results a { display: block; padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none; }
+	.command-results a:hover, .command-results a:focus-visible { background: var(--hover); outline-offset: -2px; }
+	.command-results strong { display: block; overflow: hidden; font-size: 12.5px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+	.command-results span { display: block; margin-top: 2px; overflow: hidden; color: var(--muted); font-size: 11px; line-height: 1.55; text-overflow: ellipsis; white-space: nowrap; }
+	.command-results :global(mark) { padding: 0 1px; background: var(--mark-bg); color: var(--text); }
+	.command-footer { display: flex; align-items: center; gap: 12px; padding: 8px 14px; color: var(--faint); font-size: 10px; }
+	.command-footer span { display: flex; align-items: center; gap: 3px; }
+	.command-footer a { margin-left: auto; color: var(--muted); text-decoration: none; }
+	.command-footer a:hover { color: var(--accent); }
+	@media (max-width: 520px) { .command-dialog { width: calc(100vw - 20px); max-height: calc(100vh - 100px); } .command-form kbd { display: none; } .command-footer span:nth-child(2) { display: none; } }
+</style>

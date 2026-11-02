@@ -1,0 +1,70 @@
+---
+import type { BlogPost } from '../lib/content';
+import { getCategory, getTag } from '../config/taxonomy';
+import { getReadingTime } from '../lib/reading-time';
+import FormattedDate from './FormattedDate.astro';
+interface Props {
+	posts: BlogPost[];
+	variant?: 'default' | 'dense' | 'compact';
+	showReadingTime?: boolean;
+	emptyTitle?: string;
+	emptyText?: string;
+}
+const {
+	posts,
+	variant = 'default',
+	showReadingTime = true,
+	emptyTitle = '这里还没有笔记',
+	emptyText = '发布新文章后，内容会自动出现在这里。',
+} = Astro.props;
+---
+{posts.length ? <div class:list={['post-list', variant]}>{posts.map((post) => {
+	const category = getCategory(post.data.category);
+	const date = post.data.updatedDate ?? post.data.pubDate;
+	return <article class="post-row">
+		<div class="post-main">
+			<div class="post-kicker">
+				<a href={`/categories/${category.slug}/`}>{category.name}</a>
+				{post.data.demo && <span class="demo-label">示例</span>}
+			</div>
+			<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+			{variant === 'default' && <p>{post.data.description}</p>}
+		</div>
+		<div class="post-meta">
+			<div class="post-tags">{post.data.tags.slice(0, 3).map((tag) => <a href={`/tags/${tag}/`}>#{getTag(tag)?.name ?? tag}</a>)}</div>
+			<div class="post-facts">
+				<time datetime={date.toISOString()}>{post.data.updatedDate ? '更新于 ' : ''}<FormattedDate date={date} /></time>
+				{showReadingTime && <span>{getReadingTime(post.body)} 分钟</span>}
+			</div>
+		</div>
+	</article>;
+})}</div> : <div class="list-empty"><strong>{emptyTitle}</strong><p>{emptyText}</p></div>}
+<style>
+	.post-list { border-top: 1px solid var(--line); }
+	.post-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, auto); gap: 1.5rem; align-items: start; padding: 13px 0 12px; border-bottom: 1px solid var(--line); }
+	.post-kicker { display: flex; align-items: center; gap: .45rem; min-height: 17px; margin-bottom: 2px; }
+	.post-kicker > a { color: var(--accent); font-size: 11px; font-weight: 600; letter-spacing: .03em; text-decoration: none; }
+	.post-main h2 { font-size: 15px; font-weight: 600; line-height: 1.55; }
+	.post-main h2 a { color: var(--text); text-decoration: none; }
+	.post-main h2 a:hover { color: var(--accent); }
+	.post-main > p { display: -webkit-box; margin-top: 3px; overflow: hidden; color: var(--muted); font-size: 12.5px; line-height: 1.65; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+	.post-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; padding-top: 20px; text-align: right; }
+	.post-tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+	.post-tags a { color: var(--muted); font-size: 11px; text-decoration: none; }
+	.post-tags a:hover { color: var(--accent); }
+	.post-facts { display: flex; gap: 8px; color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+	.post-facts span::before { margin-right: 8px; color: var(--line-strong); content: '·'; }
+	.compact .post-row { min-height: 46px; padding: 7px 0 6px; }
+	.compact .post-main > p { display: none; }
+	.compact .post-meta { padding-top: 18px; }
+	.dense .post-row { display: block; padding: 8px 0; }
+	.dense .post-main h2 { font-size: 13px; font-weight: 500; }
+	.dense .post-meta { display: block; padding-top: 2px; }
+	.dense .post-tags { display: none; }
+	.dense .post-facts { justify-content: flex-start; font-size: 11px; }
+	.dense .post-facts span { display: none; }
+	.list-empty { padding: 32px 0; border-block: 1px solid var(--line); }
+	.list-empty strong { font-size: 14px; }
+	.list-empty p { margin-top: 4px; color: var(--muted); font-size: 12.5px; }
+	@media (max-width: 640px) { .post-row { grid-template-columns: 1fr; gap: 4px; padding: 12px 0; } .post-meta { align-items: flex-start; padding-top: 1px; text-align: left; } .post-tags { display: none; } .post-facts { flex-wrap: wrap; } .post-main > p { -webkit-line-clamp: 2; } }
+</style>

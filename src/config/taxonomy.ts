@@ -1,9 +1,9 @@
 export const categories = [
-	{ slug: 'ai', name: '人工智能', description: '理解技术变化，也审视人与工具的关系。' },
-	{ slug: 'technology', name: '技术实践', description: '记录可复用的方法、工具与工程经验。' },
-	{ slug: 'management', name: '管理思考', description: '关于协作、决策，以及如何让事情真正发生。' },
-	{ slug: 'reading', name: '阅读与思考', description: '从书籍与文字出发，整理自己的认知。' },
-	{ slug: 'life', name: '生活随笔', description: '保存日常里的观察、感受与微小发现。' },
+	{ slug: 'ai', name: '人工智能', description: '模型、工具，以及技术变化中的判断。' },
+	{ slug: 'technology', name: '技术实践', description: '可复用的方法、工具与工程经验。' },
+	{ slug: 'systems', name: '系统开发', description: '架构、实现与长期维护中的取舍。' },
+	{ slug: 'management', name: '管理思考', description: '协作、决策，以及如何让事情发生。' },
+	{ slug: 'reading', name: '阅读随笔', description: '从阅读与日常观察中整理认知。' },
 ] as const;
 
 export const tags = [

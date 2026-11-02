@@ -1,5 +1,5 @@
 ---
-title: '中文博客 Markdown 排版示例'
+title: '中文博客 Markdown 排版示例：代码、表格与移动端长文阅读'
 description: '集中展示标题、引用、表格、代码、图片与列表，用于检查长文阅读、深色主题和移动端排版。'
 pubDate: '2026-10-16'
 category: 'technology'
@@ -88,4 +88,4 @@ export function canPublish(article: Article) {
 
 ---
 
-排版检查到这里结束。真正的文章仍应从一个值得讨论的问题开始。
+排版检查到这里结束。真正的文章仍应从一个值得讨论的问题开始。若需要组件化表达，可继续阅读[用 MDX 扩展文章表达能力](/blog/using-mdx/)。

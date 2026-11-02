@@ -1,95 +1,101 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FeaturedArticle from '../components/FeaturedArticle.astro';
-import ArticleCard from '../components/ArticleCard.astro';
+import PostList from '../components/PostList.astro';
+import HomeAside from '../components/HomeAside.astro';
 import { site } from '../config/site';
 import { categories } from '../config/taxonomy';
 import { topics } from '../config/topics';
-import { getFeaturedPost, getPublishedPosts } from '../lib/content';
+import { getPublishedPosts } from '../lib/content';
 
 const posts = await getPublishedPosts();
-const featured = await getFeaturedPost(posts);
-const latest = posts.filter((post) => post.id !== featured?.id).slice(0, 3);
-const topicData = topics.map((topic) => ({ ...topic, articles: topic.posts.map((id) => posts.find((post) => post.id === id)).filter(Boolean) })).filter((topic) => topic.articles.length > 0);
+const recent = posts.slice(0, 6);
+const updated = posts
+	.filter((post) => post.data.updatedDate)
+	.sort((a, b) => b.data.updatedDate!.valueOf() - a.data.updatedDate!.valueOf());
+const topicData = topics
+	.map((topic) => ({ ...topic, count: topic.posts.filter((id) => posts.some((post) => post.id === id)).length }))
+	.filter((topic) => topic.count > 0);
+const latestDate = posts[0]?.data.updatedDate ?? posts[0]?.data.pubDate;
 ---
 <BaseLayout title={site.name} description={site.description}>
-	<section class="home-hero shell">
-		<div class="hero-edition"><span>AN INDEPENDENT JOURNAL</span><span>VOL. 001 — {new Date().getFullYear()}</span></div>
-		<div class="hero-main">
-			<div>
-				<p class="hero-name">{site.name}<span>{site.englishName}</span></p>
-				<h1>记录思考，<br />积累认知<span>。</span></h1>
-			</div>
-			<div class="hero-intro"><span class="intro-line" aria-hidden="true"></span><p>{site.description}</p><a class="text-link" href="/about/">了解这个站点</a></div>
+	<header class="home-header">
+		<p class="eyebrow">DIGITAL GARDEN / {site.englishName}</p>
+		<h1>{site.tagline}</h1>
+		<p>{site.description}</p>
+		<div class="home-stats">
+			<span><strong>{posts.length}</strong> 篇笔记</span>
+			<span><strong>{categories.filter((category) => posts.some((post) => post.data.category === category.slug)).length}</strong> 个活跃分类</span>
+			{latestDate && <span>最近更新 <strong>{new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(latestDate).replaceAll('/', '.')}</strong></span>}
+		</div>
+	</header>
+
+	<section class="section" aria-labelledby="recent-title">
+		<div class="section-header"><h2 id="recent-title">最近更新</h2><a href="/blog/">全部文章 →</a></div>
+		<PostList posts={recent} variant="compact" emptyTitle="知识库正在生长" emptyText="发布第一篇笔记后，这里会自动出现最近更新。" />
+	</section>
+
+	<section class="section" aria-labelledby="categories-title">
+		<div class="section-header"><h2 id="categories-title">按分类浏览</h2><a href="/categories/">全部分类 →</a></div>
+		<div class="category-index">
+			{categories.map((category) => {
+				const count = posts.filter((post) => post.data.category === category.slug).length;
+				return <a href={`/categories/${category.slug}/`}><span class="category-name">{category.name}</span><span class="category-desc">{category.description}</span><span class="category-count">{count}</span></a>;
+			})}
 		</div>
 	</section>
 
-	{featured ? <section class="shell cover-section" aria-labelledby="cover-title">
-		<h2 id="cover-title" class="sr-only">封面文章</h2>
-		<FeaturedArticle post={featured} />
-	</section> : <section class="shell cover-section"><div class="empty-state"><h2>第一篇文章，正在酝酿</h2><p>发布文章后，这里会自动出现封面与最新内容。</p></div></section>}
-
-	{latest.length > 0 && <section class="section shell" aria-labelledby="latest-title">
-		<div class="section-heading"><div><p class="eyebrow">LATEST STORIES</p><h2 id="latest-title">最新文章</h2></div><a href="/blog/">查看全部文章 →</a></div>
-		<div class="latest-grid">{latest.map((post) => <ArticleCard post={post} />)}</div>
+	{topicData.length > 0 && <section class="section" aria-labelledby="topics-title">
+		<div class="section-header"><h2 id="topics-title">精选知识专题</h2><a href="/topics/">全部专题 →</a></div>
+		<div class="topic-index">
+			{topicData.map((topic, index) => <a href={`/topics/${topic.slug}/`}><span class="topic-mark">{String(index + 1).padStart(2, '0')}</span><div><strong>{topic.title}</strong><p>{topic.description}</p></div><span class="topic-count">{topic.count} 篇</span><span aria-hidden="true">→</span></a>)}
+		</div>
 	</section>}
 
-	<section class="section shell discovery" aria-labelledby="discovery-title">
-		<h2 id="discovery-title" class="sr-only">分类与专题</h2>
-		<div class="category-panel">
-			<div class="panel-heading"><p class="eyebrow">SECTIONS</p><h3>按分类阅读</h3></div>
-			<div class="category-list">{categories.map((category, index) => {
-				const count = posts.filter((post) => post.data.category === category.slug).length;
-				return <a href={`/categories/${category.slug}/`}><span class="category-number">{String(index + 1).padStart(2, '0')}</span><span>{category.name}</span><small>{count} 篇</small><span aria-hidden="true">↗</span></a>;
-			})}</div>
-		</div>
-		<div class="topic-panel">
-			<div class="panel-heading"><p class="eyebrow">CURATED SERIES</p><h3>编辑专题</h3></div>
-			{topicData.map((topic, index) => <a class="topic-item" href={`/topics/${topic.slug}/`}><span class="topic-index">0{index + 1}</span><div><p>{topic.englishTitle}</p><h4>{topic.title}</h4><span>{topic.description}</span></div><span class="topic-arrow" aria-hidden="true">→</span></a>)}
-			<a class="text-link all-topics" href="/topics/">全部专题</a>
-		</div>
-	</section>
+	{updated.length > 0 && <section class="section" aria-labelledby="updated-title">
+		<div class="section-header"><h2 id="updated-title">最近修改的笔记</h2></div>
+		<PostList posts={updated.slice(0, 4)} variant="dense" showReadingTime={false} />
+	</section>}
 
-	<section class="section shell author-section">
-		<div class="author-symbol" aria-hidden="true">“</div>
-		<div><p class="eyebrow">ABOUT THE AUTHOR</p><h2>保持好奇，<br />也保持审慎。</h2></div>
-		<div class="author-copy"><p>{site.author.bio}</p><a class="text-link" href="/about/">关于作者与本站</a></div>
+	<section class="section site-note" aria-labelledby="site-note-title">
+		<div><p class="eyebrow">ABOUT</p><h2 id="site-note-title">一套持续生长的个人知识空间</h2><p>{site.author.bio}</p></div>
+		<a class="text-link" href="/about/">关于本站 →</a>
 	</section>
-	{posts.some((post) => post.data.demo) && <p class="shell demo-note">当前站点包含明确标注的示例文章，用于展示内容与排版能力。</p>}
+	{posts.some((post) => post.data.demo) && <p class="demo-note">当前含有明确标注的示例文章，用于验证知识库功能与排版。</p>}
+
+	<div slot="aside"><HomeAside /></div>
 </BaseLayout>
 <style>
-	.home-hero { padding-top: clamp(3rem, 7vw, 6rem); }
-	.hero-edition { display: flex; justify-content: space-between; padding-bottom: 1.1rem; border-bottom: 1px solid var(--line); color: var(--muted); font-family: var(--font-serif); font-size: .63rem; letter-spacing: .15em; }
-	.hero-main { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(260px, .5fr); gap: 3rem; align-items: end; padding: clamp(2.5rem, 5vw, 4.5rem) 0 clamp(3rem, 6vw, 5.5rem); }
-	.hero-name { display: flex; align-items: center; gap: .7rem; margin-bottom: 1.5rem; font-size: .8rem; font-weight: 600; letter-spacing: .12em; }
-	.hero-name span { color: var(--muted); font-family: var(--font-serif); font-size: .62rem; font-weight: 400; letter-spacing: .16em; }
-	h1 { font-size: clamp(3.3rem, 7.2vw, 6.6rem); font-weight: 550; line-height: 1.16; letter-spacing: -.075em; }
-	h1 > span { color: var(--accent); }
-	.hero-intro { padding-bottom: .7rem; }
-	.intro-line { display: block; width: 2.5rem; height: 1px; margin-bottom: 1.5rem; background: var(--accent); }
-	.hero-intro p { margin-bottom: 1.5rem; color: var(--muted); font-size: .92rem; line-height: 2; }
-	.cover-section { padding-top: 1rem; }
-	.latest-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.5rem, 3vw, 2.8rem); }
-	.discovery { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(3rem, 7vw, 7rem); }
-	.panel-heading { margin-bottom: 1.5rem; }
-	.panel-heading h3 { margin-top: .4rem; font-size: 1.55rem; }
-	.category-list { border-top: 1px solid var(--text); }
-	.category-list a { display: grid; grid-template-columns: 2rem 1fr auto 1rem; align-items: center; gap: .8rem; min-height: 60px; border-bottom: 1px solid var(--line); color: var(--text); font-size: .88rem; text-decoration: none; }
-	.category-list a:hover > span:nth-child(2) { color: var(--accent); }
-	.category-number, .category-list small { color: var(--muted); font-family: var(--font-serif); font-size: .66rem; }
-	.topic-item { display: grid; grid-template-columns: 2.5rem 1fr auto; gap: 1rem; padding: 1.6rem 0; border-top: 1px solid var(--line); color: var(--text); text-decoration: none; }
-	.topic-item:first-of-type { border-top-color: var(--text); }
-	.topic-index { color: var(--accent); font-family: var(--font-serif); font-size: .72rem; }
-	.topic-item p { color: var(--muted); font-family: var(--font-serif); font-size: .61rem; letter-spacing: .14em; }
-	.topic-item h4 { margin: .35rem 0 .6rem; font-size: 1.35rem; }
-	.topic-item div > span { color: var(--muted); font-size: .8rem; line-height: 1.8; }
-	.topic-arrow { align-self: center; color: var(--accent); }
-	.all-topics { margin-top: 1.5rem; }
-	.author-section { display: grid; grid-template-columns: 80px minmax(0, 1fr) minmax(280px, .7fr); gap: 2rem; align-items: center; padding-bottom: var(--space-24); border-bottom: 1px solid var(--line); }
-	.author-symbol { align-self: start; color: var(--accent); font-family: var(--font-serif); font-size: 6rem; line-height: 1; }
-	.author-section h2 { margin-top: .8rem; font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 400; line-height: 1.4; }
-	.author-copy p { margin-bottom: 1.5rem; color: var(--muted); font-size: .9rem; line-height: 2; }
-	.demo-note { margin-top: 1.5rem; color: var(--muted); font-size: .68rem; }
-	@media (max-width: 800px) { .hero-main { grid-template-columns: 1fr; gap: 2rem; } .hero-intro { max-width: 30rem; } .latest-grid { grid-template-columns: 1fr; gap: 3rem; } .discovery { grid-template-columns: 1fr; } .author-section { grid-template-columns: 40px 1fr; } .author-copy { grid-column: 2; } }
-	@media (max-width: 480px) { h1 { font-size: clamp(3rem, 15vw, 4.2rem); } .hero-edition span:first-child { display: none; } .hero-edition { justify-content: flex-end; } .author-symbol { font-size: 4rem; } }
+	.home-header { padding: 31px 0 23px; border-bottom: 1px solid var(--line); }
+	.home-header h1 { max-width: 620px; margin-top: 7px; font-size: 30px; font-weight: 650; letter-spacing: -.03em; }
+	.home-header > p:not(.eyebrow) { max-width: 620px; margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.75; }
+	.home-stats { display: flex; flex-wrap: wrap; align-items: center; gap: 0; margin-top: 14px; color: var(--faint); font-size: 10.5px; }
+	.home-stats span + span::before { margin: 0 9px; color: var(--line-strong); content: '·'; }
+	.home-stats strong { color: var(--muted); font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; }
+	.category-index { border-top: 1px solid var(--line); }
+	.category-index a { display: grid; grid-template-columns: 92px minmax(0, 1fr) 28px; align-items: center; gap: 12px; min-height: 39px; border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none; }
+	.category-index a:hover .category-name { color: var(--accent); }
+	.category-name { font-size: 12.5px; font-weight: 550; }
+	.category-desc { overflow: hidden; color: var(--muted); font-size: 11.5px; text-overflow: ellipsis; white-space: nowrap; }
+	.category-count { color: var(--faint); font-family: var(--font-mono); font-size: 10px; text-align: right; }
+	.topic-index { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+	.topic-index > a { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto auto; align-items: center; gap: 9px; min-height: 76px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--text); text-decoration: none; }
+	.topic-index > a:hover { border-color: var(--line-strong); background: var(--hover); }
+	.topic-mark { color: var(--faint); font-family: var(--font-mono); font-size: 9.5px; }
+	.topic-index strong { font-size: 12.5px; font-weight: 600; }
+	.topic-index p { display: -webkit-box; margin-top: 2px; overflow: hidden; color: var(--muted); font-size: 10.5px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+	.topic-count { color: var(--faint); font-family: var(--font-mono); font-size: 9.5px; white-space: nowrap; }
+	.topic-index > a > span:last-child { color: var(--muted); font-size: 11px; }
+	.site-note { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding: 14px 0; border-block: 1px solid var(--line); }
+	.site-note h2 { margin-top: 3px; font-size: 14px; }
+	.site-note div > p:last-child { max-width: 560px; margin-top: 5px; color: var(--muted); font-size: 11.5px; line-height: 1.7; }
+	.site-note .text-link { flex: none; padding-bottom: 2px; }
+	.demo-note { margin-top: 14px; color: var(--faint); font-size: 10.5px; }
+	@media (max-width: 700px) {
+		.home-header { padding-top: 23px; }
+		.home-header h1 { font-size: 25px; }
+		.home-stats span + span::before { margin: 0 6px; }
+		.category-index a { grid-template-columns: 86px minmax(0, 1fr) 24px; gap: 8px; }
+		.topic-index { grid-template-columns: 1fr; }
+		.site-note { align-items: flex-start; flex-direction: column; gap: 8px; }
+	}
 </style>

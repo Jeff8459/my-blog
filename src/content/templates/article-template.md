@@ -41,4 +41,11 @@ const readyToPublish = false;
 
 ![正文图片的替代文字](../../assets/blog-placeholder-about.jpg)
 
+## 延伸阅读
+
+使用稳定的站内路径引用其他已发布笔记，反向链接会自动生成：
+
+- [另一篇笔记](/blog/another-note/)
+- [带小节的笔记](../another-note/#section-name)
+
 发布前检查：将 `draft` 改为 `false`，确认 `demo` 符合内容性质，并重新构建搜索索引。

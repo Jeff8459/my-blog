@@ -1,8 +1,7 @@
 <details class="theme-menu" data-theme-menu>
 	<summary class="icon-button" aria-label="切换颜色主题" title="切换颜色主题">
-		<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42m0-12.72-1.42 1.42M7.06 16.94l-1.42 1.42"/><circle cx="12" cy="12" r="4"/></svg>
-		<span class="theme-current" data-theme-label>跟随系统</span>
-		<svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+		<svg class="theme-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.5"/><path d="M10 2.2v1.7m0 12.2v1.7M2.2 10h1.7m12.2 0h1.7M4.5 4.5l1.2 1.2m8.6 8.6 1.2 1.2m0-11-1.2 1.2M5.7 14.3l-1.2 1.2"/></svg>
+		<span class="sr-only theme-current" data-theme-label>跟随系统</span>
 	</summary>
 	<div class="theme-options" role="group" aria-label="颜色主题">
 		<button type="button" data-theme-choice="system" aria-pressed="true"><span>跟随系统</span><span class="check" aria-hidden="true">✓</span></button>
@@ -16,14 +15,6 @@
 	const labels = { system: '跟随系统', light: '浅色', dark: '深色' };
 	type Preference = keyof typeof labels;
 	const preference = () => (document.documentElement.dataset.themePreference || 'system') as Preference;
-	const apply = (choice: Preference) => {
-		const resolved = choice === 'system' ? (media.matches ? 'dark' : 'light') : choice;
-		document.documentElement.dataset.theme = resolved;
-		document.documentElement.dataset.themePreference = choice;
-		document.documentElement.style.colorScheme = resolved;
-		localStorage.setItem('notes-theme', choice);
-		update();
-	};
 	const update = () => {
 		const current = preference();
 		const label = document.querySelector('[data-theme-label]');
@@ -32,11 +23,16 @@
 			button.setAttribute('aria-pressed', String(button.dataset.themeChoice === current));
 		});
 	};
+	const apply = (choice: Preference) => {
+		const resolved = choice === 'system' ? (media.matches ? 'dark' : 'light') : choice;
+		document.documentElement.dataset.theme = resolved;
+		document.documentElement.dataset.themePreference = choice;
+		document.documentElement.style.colorScheme = resolved;
+		localStorage.setItem('notes-theme', choice);
+		update();
+	};
 	document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]').forEach((button) => {
-		button.addEventListener('click', () => {
-			apply(button.dataset.themeChoice as Preference);
-			menu?.removeAttribute('open');
-		});
+		button.addEventListener('click', () => { apply(button.dataset.themeChoice as Preference); menu?.removeAttribute('open'); });
 	});
 	media.addEventListener('change', () => { if (preference() === 'system') apply('system'); });
 	document.addEventListener('keydown', (event) => { if (event.key === 'Escape') menu?.removeAttribute('open'); });
@@ -45,14 +41,12 @@
 </script>
 <style>
 	.theme-menu { position: relative; }
-	.theme-menu summary { list-style: none; gap: .45rem; width: auto; padding: 0 .7rem; font-size: .76rem; }
+	.theme-menu summary { list-style: none; }
 	.theme-menu summary::-webkit-details-marker { display: none; }
-	.theme-icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-	.chevron { width: 12px; fill: none; stroke: currentColor; }
-	.theme-options { position: absolute; z-index: 80; top: calc(100% + .8rem); right: 0; width: 150px; padding: .4rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); box-shadow: var(--shadow); }
-	.theme-options button { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 40px; padding: .5rem .65rem; border: 0; border-radius: 4px; background: transparent; color: var(--text); cursor: pointer; }
-	.theme-options button:hover { background: var(--image-bg); }
+	.theme-icon { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; }
+	.theme-options { position: absolute; z-index: 90; top: calc(100% + 7px); right: 0; width: 132px; padding: 4px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+	.theme-options button { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 30px; padding: 3px 7px; border: 0; border-radius: 3px; background: transparent; color: var(--muted); font-size: 11.5px; cursor: pointer; }
+	.theme-options button:hover { background: var(--hover); color: var(--text); }
 	.theme-options button[aria-pressed="false"] .check { visibility: hidden; }
 	.theme-options button[aria-pressed="true"] { color: var(--accent); }
-	@media (max-width: 720px) { .theme-current, .chevron { display: none; } .theme-menu summary { padding: 0; width: 44px; } }
 </style>

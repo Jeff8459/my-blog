@@ -5,13 +5,13 @@ const { headings, variant } = Astro.props;
 const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 ---
 {items.length > 0 && variant === 'mobile' && <details class="mobile-toc" data-toc>
-	<summary>本文目录<span>{items.length} 个小节</span></summary>
+	<summary>本页目录<span>{items.length} 节</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m5 6 3 3 3-3"/></svg></summary>
 	<nav aria-label="移动端文章目录">{items.map((item) => <a class:list={[`depth-${item.depth}`]} href={`#${item.slug}`}>{item.text}</a>)}</nav>
 </details>}
-{items.length > 0 && variant === 'desktop' && <aside class="desktop-toc" data-toc>
-	<p>本文目录</p>
+{items.length > 0 && variant === 'desktop' && <section class="desktop-toc" data-toc>
+	<p class="aside-label">ON THIS PAGE</p>
 	<nav aria-label="文章目录">{items.map((item) => <a class:list={[`depth-${item.depth}`]} href={`#${item.slug}`}>{item.text}</a>)}</nav>
-</aside>}
+</section>}
 <script>
 	const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc] a')];
 	const headings = tocLinks.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1)))).filter(Boolean) as HTMLElement[];
@@ -22,17 +22,22 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
 		const observer = new IntersectionObserver((entries) => {
 			const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
 			if (visible[0]) setActive(visible[0].target.id);
-		}, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+		}, { rootMargin: '-12% 0px -72% 0px', threshold: 0 });
 		headings.forEach((heading) => observer.observe(heading));
 	}
 </script>
 <style>
-	.desktop-toc { position: sticky; top: 7.5rem; }
-	.desktop-toc > p { margin-bottom: 1rem; color: var(--text); font-size: .72rem; font-weight: 600; letter-spacing: .12em; }
-	nav { display: grid; gap: .15rem; }
-	a { display: block; padding: .32rem 0 .32rem .8rem; border-left: 1px solid var(--line); color: var(--muted); font-size: .75rem; line-height: 1.55; text-decoration: none; }
-	a.depth-3 { padding-left: 1.6rem; font-size: .7rem; }
+	.desktop-toc > p { margin-bottom: 7px; }
+	nav { display: grid; gap: 1px; }
+	a { display: block; padding: 3px 0 3px 9px; border-left: 1px solid var(--line); color: var(--muted); font-size: 11.5px; line-height: 1.55; text-decoration: none; }
+	a.depth-3 { padding-left: 18px; font-size: 11px; }
 	a:hover, a[aria-current="location"] { border-left-color: var(--accent); color: var(--accent); }
-	.mobile-toc { display: none; }
-	@media (max-width: 1023px) { .desktop-toc { display: none; } .mobile-toc { display: block; margin: 2.2rem 0; border-block: 1px solid var(--line); } .mobile-toc summary { display: flex; justify-content: space-between; align-items: center; min-height: 52px; cursor: pointer; font-size: .8rem; font-weight: 600; list-style: none; } .mobile-toc summary::-webkit-details-marker { display: none; } .mobile-toc summary span { color: var(--muted); font-size: .68rem; font-weight: 400; } .mobile-toc nav { padding: .4rem 0 1rem; } }
+	.mobile-toc { margin: 18px 0 0; border-block: 1px solid var(--line); }
+	.mobile-toc summary { display: flex; align-items: center; gap: 6px; min-height: 38px; color: var(--text); font-size: 12px; cursor: pointer; list-style: none; }
+	.mobile-toc summary::-webkit-details-marker { display: none; }
+	.mobile-toc summary span { margin-left: auto; color: var(--faint); font-size: 10px; }
+	.mobile-toc summary svg { width: 12px; fill: none; stroke: var(--muted); transition: transform .15s; }
+	.mobile-toc:not([open]) summary svg { transform: rotate(-90deg); }
+	.mobile-toc nav { padding: 3px 0 9px; }
+	@media (min-width: 1025px) { .mobile-toc { display: none; } }
 </style>

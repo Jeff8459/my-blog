@@ -4,8 +4,18 @@ import { tags } from '../../config/taxonomy';
 import { getPublishedPosts } from '../../lib/content';
 const posts = await getPublishedPosts();
 ---
-<BaseLayout title="文章标签" description="通过更细致的主题标签发现相关文章。">
-	<header class="page-hero shell"><div><p class="eyebrow">INDEX</p><h1>文章标签</h1></div><p>标签跨越分类，连接那些讨论同一问题的文章。</p></header>
-	<nav class="shell tag-cloud" aria-label="全部标签">{tags.map((tag) => <a href={`/tags/${tag.slug}/`}><span>#{tag.name}</span><small>{posts.filter((post) => post.data.tags.includes(tag.slug)).length}</small></a>)}</nav>
+<BaseLayout title="文章标签" description="通过标签发现跨分类的相关文章。">
+	<header class="page-header"><p class="eyebrow">INDEX / TAGS</p><h1>文章标签</h1><p class="description">标签跨越分类，把讨论同一问题的笔记连接起来。</p></header>
+	<nav class="tag-cloud" aria-label="全部标签">
+		{tags.map((tag) => {
+			const count = posts.filter((post) => post.data.tags.includes(tag.slug)).length;
+			return <a href={`/tags/${tag.slug}/`}><span>#{tag.name}</span><small>{count}</small></a>;
+		})}
+	</nav>
 </BaseLayout>
-<style>.tag-cloud { display: flex; flex-wrap: wrap; gap: .8rem; padding-top: 3rem; } .tag-cloud a { display: flex; gap: .8rem; padding: .7rem 1rem; border: 1px solid var(--line); color: var(--text); font-size: .85rem; text-decoration: none; } .tag-cloud a:hover { border-color: var(--accent); color: var(--accent); } small { color: var(--muted); }</style>
+<style>
+	.tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 16px; }
+	.tag-cloud a { display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 0 9px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--text); font-size: 12px; text-decoration: none; }
+	.tag-cloud a:hover { border-color: var(--line-strong); background: var(--hover); color: var(--accent); }
+	small { color: var(--faint); font-family: var(--font-mono); font-size: 9.5px; }
+</style>

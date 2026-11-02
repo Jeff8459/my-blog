@@ -1,21 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="全文搜索" description="搜索已发布文章的标题与正文，支持中文关键词。" noindex={true}>
-	<section class="search-page shell">
-		<header class="search-intro"><p class="eyebrow">SEARCH THE JOURNAL</p><h1>寻找一篇文章</h1><p>输入中文或英文关键词，搜索标题与正文。按 <kbd>/</kbd> 可快速聚焦搜索框。</p></header>
+<BaseLayout title="全文搜索" description="搜索已发布笔记的标题与正文，支持中文关键词。" noindex={true}>
+	<header class="page-header"><p class="eyebrow">SEARCH / LIBRARY</p><h1>搜索知识库</h1><p class="description">搜索已发布笔记的标题与正文。按 <kbd>⌘K</kbd> 或 <kbd>Ctrl K</kbd> 打开快捷搜索，按 <kbd>/</kbd> 聚焦输入框。</p></header>
+	<section class="search-page">
 		<div class="search-container">
 			<form id="search-form" role="search">
 				<label class="sr-only" for="search-input">搜索文章标题与正文</label>
-				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
-				<input id="search-input" type="search" inputmode="search" autocomplete="off" placeholder="输入关键词，例如「思考」或「Markdown」" />
+				<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="m13 13 4 4"/></svg>
+				<input id="search-input" type="search" inputmode="search" autocomplete="off" placeholder="输入中文或英文关键词…" />
 				<button id="search-clear" type="button" aria-label="清空搜索" hidden>清空</button>
 			</form>
 			<p id="search-status" role="status" aria-live="polite">输入关键词开始搜索。</p>
 			<div id="search-results"></div>
 			<button id="search-more" class="search-more" type="button" hidden>加载更多结果</button>
 			<p class="search-fallback" id="search-fallback" hidden>搜索索引尚未生成。请先执行 <code>npm run build</code>，再通过 <code>npm run preview</code> 验证搜索。</p>
-			<noscript><p class="search-fallback">全文搜索需要启用 JavaScript。你仍然可以前往<a href="/blog/">文章归档</a>浏览全部内容。</p></noscript>
+			<noscript><p class="search-fallback">全文搜索需要启用 JavaScript。你仍然可以前往<a href="/blog/">全部文章</a>浏览内容。</p></noscript>
 		</div>
 	</section>
 </BaseLayout>
@@ -77,7 +77,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			status.textContent = '暂时无法完成搜索。'; document.querySelector<HTMLElement>('#search-fallback')!.hidden = false;
 		}
 	};
-	input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => runSearch(input.value), 250); });
+	input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => runSearch(input.value), 220); });
 	input.addEventListener('focus', () => { loadPagefind().catch(() => undefined); }, { once: true });
 	form.addEventListener('submit', (event) => { event.preventDefault(); runSearch(input.value); });
 	clear.addEventListener('click', () => { input.value = ''; input.focus(); runSearch(''); history.replaceState(null, '', location.pathname); });
@@ -90,22 +90,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 	if (initial) { input.value = initial; runSearch(initial); }
 </script>
 <style>
-	.search-container { max-width: 800px; margin-inline: auto; }
-	.search-intro kbd { padding: .1rem .35rem; border: 1px solid var(--line); border-radius: 3px; font-family: var(--font-mono); font-size: .75rem; }
-	#search-form { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; padding: 0 1.2rem; border: 1px solid var(--text); border-radius: var(--radius-sm); background: var(--surface); }
-	#search-form svg { width: 21px; fill: none; stroke: var(--muted); stroke-width: 1.5; }
-	#search-input { width: 100%; min-height: 64px; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 1rem; }
-	#search-input::placeholder { color: var(--muted); }
-	#search-clear, .search-more { border: 0; background: transparent; color: var(--accent); font-size: .78rem; cursor: pointer; }
-	#search-clear { min-height: 44px; }
-	#search-status { margin: 1.2rem 0 2rem; color: var(--muted); font-size: .78rem; }
-	.search-result { padding: 1.8rem 0; border-top: 1px solid var(--line); }
-	.search-result h2 { font-size: 1.3rem; }
+	.search-page { padding-top: 18px; }
+	.search-container { max-width: 720px; }
+	.page-header kbd { padding: 1px 4px; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); font-family: var(--font-mono); font-size: 9px; }
+	#search-form { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 9px; padding: 0 11px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--surface); }
+	#search-form:focus-within { border-color: var(--accent); }
+	#search-form svg { width: 16px; fill: none; stroke: var(--muted); stroke-width: 1.5; }
+	#search-input { width: 100%; min-height: 40px; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 13px; }
+	#search-input::placeholder { color: var(--faint); }
+	#search-clear, .search-more { border: 0; background: transparent; color: var(--accent); font-size: 11px; cursor: pointer; }
+	#search-clear { min-height: 32px; }
+	#search-status { margin: 9px 0 15px; color: var(--faint); font-size: 10.5px; }
+	.search-result { padding: 12px 0; border-top: 1px solid var(--line); }
+	.search-result h2 { font-size: 14px; }
 	.search-result-link { color: var(--text); text-decoration: none; }
 	.search-result-link:hover { color: var(--accent); }
-	.search-result-excerpt { margin-top: .7rem; color: var(--muted); font-size: .88rem; line-height: 1.85; }
-	.search-result-excerpt :global(mark) { padding-inline: .1em; background: var(--mark-bg); color: var(--text); }
-	.search-more { display: block; min-height: 44px; margin: 2rem auto; padding: .6rem 1.2rem; border: 1px solid var(--line); }
-	.search-fallback code { font-family: var(--font-mono); }
-	@media (max-width: 600px) { #search-form { gap: .6rem; padding: 0 .8rem; } #search-input { min-height: 56px; font-size: 16px; } }
+	.search-result-excerpt { margin-top: 4px; color: var(--muted); font-size: 11.5px; line-height: 1.65; }
+	.search-result-excerpt :global(mark) { padding-inline: 1px; background: var(--mark-bg); color: var(--text); }
+	.search-more { display: block; min-height: 32px; margin: 16px auto; padding: 0 10px; border: 1px solid var(--line); border-radius: var(--radius); }
+	.search-fallback { margin-top: 12px; color: var(--muted); font-size: 11.5px; }
+	.search-fallback code { font-family: var(--font-mono); font-size: .9em; }
+	@media (max-width: 600px) { #search-input { min-height: 40px; font-size: 16px; } }
 </style>

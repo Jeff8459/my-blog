@@ -1,22 +1,25 @@
 ---
 import { render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
-import { getAdjacentPosts, getPublishedPosts, getRelatedPosts } from '../../lib/content';
+import { getAdjacentPosts, getPublishedPosts } from '../../lib/content';
+import { buildLinkGraph, getBacklinks, getRelatedPosts } from '../../lib/links';
 
 export async function getStaticPaths() {
 	const posts = await getPublishedPosts();
+	const graph = buildLinkGraph(posts);
 	return posts.map((post) => ({
 		params: { slug: post.id },
 		props: {
 			post,
 			...getAdjacentPosts(post, posts),
-			related: getRelatedPosts(post, posts),
+			related: getRelatedPosts(post, posts, graph),
+			backlinks: getBacklinks(post.id, posts, graph),
 		},
 	}));
 }
-const { post, newer, older, related } = Astro.props;
+const { post, newer, older, related, backlinks } = Astro.props;
 const { Content, headings } = await render(post);
 ---
-<BlogPost post={post} headings={headings} newer={newer} older={older} related={related}>
+<BlogPost post={post} headings={headings} newer={newer} older={older} related={related} backlinks={backlinks}>
 	<Content />
 </BlogPost>
