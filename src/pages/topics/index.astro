@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { topics } from '../../config/topics';
+import { getPublishedPosts } from '../../lib/content';
+const posts = await getPublishedPosts();
+const topicData = topics.map((topic) => ({ ...topic, count: topic.posts.filter((id) => posts.some((post) => post.id === id)).length }));
+---
+<BaseLayout title="编辑专题" description="跨越分类，以问题为线索重新组织文章，形成可以持续阅读的专题。">
+	<header class="page-hero shell"><div><p class="eyebrow">CURATED SERIES</p><h1>编辑专题</h1></div><p>专题不是另一种分类，而是围绕一个问题做出的编辑策划。文章可以属于不同分类，在这里按新的顺序相遇。</p></header>
+	<section class="shell topic-list" aria-label="全部专题">
+		{topicData.map((topic, index) => <a href={`/topics/${topic.slug}/`}><div class="topic-number">SERIES {String(index + 1).padStart(2, '0')}</div><div><p>{topic.englishTitle}</p><h2>{topic.title}</h2></div><p class="topic-description">{topic.description}</p><div class="topic-count">{topic.count} 篇文章 <span>→</span></div></a>)}
+	</section>
+</BaseLayout>
+<style>
+	.topic-list { padding-top: 2rem; }
+	.topic-list > a { display: grid; grid-template-columns: 120px minmax(180px, .65fr) minmax(240px, 1fr) auto; gap: 2rem; align-items: center; min-height: 190px; border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none; }
+	.topic-list > a:first-child { border-top: 1px solid var(--line); }
+	.topic-number, .topic-list > a > div > p { color: var(--muted); font-family: var(--font-serif); font-size: .64rem; letter-spacing: .12em; }
+	h2 { margin-top: .5rem; font-size: 1.8rem; }
+	.topic-description { color: var(--muted); font-size: .85rem; line-height: 1.9; }
+	.topic-count { color: var(--muted); font-size: .72rem; white-space: nowrap; }
+	.topic-count span { margin-left: .5rem; color: var(--accent); }
+	.topic-list > a:hover h2 { color: var(--accent); }
+	@media (max-width: 800px) { .topic-list > a { grid-template-columns: 1fr auto; gap: 1rem; padding: 2rem 0; } .topic-number { grid-column: 1 / -1; } .topic-description { grid-column: 1 / -1; } .topic-count { grid-column: 2; grid-row: 2; } }
+</style>

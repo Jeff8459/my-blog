@@ -1,0 +1,46 @@
+---
+import type { ImageMetadata } from 'astro';
+import SEOHead from '../components/SEOHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+	description: string;
+	image?: ImageMetadata;
+	type?: 'website' | 'article';
+	publishedTime?: Date;
+	modifiedTime?: Date;
+	noindex?: boolean;
+	pagefind?: boolean;
+}
+
+const { pagefind = false, ...seo } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<script is:inline>
+			(() => {
+				const stored = localStorage.getItem('notes-theme') || 'system';
+				const preference = ['light', 'dark', 'system'].includes(stored) ? stored : 'system';
+				const resolved = preference === 'system'
+					? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+					: preference;
+				document.documentElement.dataset.theme = resolved;
+				document.documentElement.dataset.themePreference = preference;
+				document.documentElement.style.colorScheme = resolved;
+			})();
+		</script>
+		<SEOHead {...seo} />
+	</head>
+	<body>
+		<a class="skip-link" href="#main-content">跳到主要内容</a>
+		<Header />
+		<main id="main-content" data-pagefind-body={pagefind ? true : undefined} data-pagefind-ignore={!pagefind ? true : undefined}>
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>

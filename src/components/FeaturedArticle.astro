@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+import type { BlogPost } from '../lib/content';
+import { getCategory } from '../config/taxonomy';
+import { getReadingTime } from '../lib/reading-time';
+import FormattedDate from './FormattedDate.astro';
+interface Props { post: BlogPost; }
+const { post } = Astro.props;
+const cover = post.data.cover ?? post.data.heroImage;
+const category = getCategory(post.data.category);
+---
+<article class="featured">
+	<a class="featured-image" href={`/blog/${post.id}/`} tabindex="-1" aria-hidden="true">
+		{cover && <Image src={cover} alt="" width={1280} height={800} widths={[720, 960, 1280]} sizes="(max-width: 800px) 100vw, 58vw" loading="eager" fetchpriority="high" />}
+	</a>
+	<div class="featured-content">
+		<div class="featured-kicker"><span>封面文章</span><a href={`/categories/${category.slug}/`}>{category.name}</a>{post.data.demo && <span class="demo-label">示例</span>}</div>
+		<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+		<p>{post.data.description}</p>
+		<div class="featured-meta"><FormattedDate date={post.data.pubDate} /><span>·</span><span>{getReadingTime(post.body)} 分钟阅读</span></div>
+		<a class="text-link" href={`/blog/${post.id}/`}>阅读全文<span class="sr-only">：{post.data.title}</span></a>
+	</div>
+</article>
+<style>
+	.featured { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .85fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+	.featured-image { display: block; aspect-ratio: 8 / 5; overflow: hidden; background: var(--image-bg); }
+	.featured-image img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.82); transition: filter .3s, transform .5s; }
+	.featured:hover img { filter: saturate(1); transform: scale(1.01); }
+	.featured-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-bottom: 1.25rem; font-size: .7rem; }
+	.featured-kicker > span:first-child { padding-right: .75rem; border-right: 1px solid var(--line); color: var(--muted); letter-spacing: .12em; }
+	.featured-kicker a { color: var(--accent); font-weight: 600; letter-spacing: .08em; text-decoration: none; }
+	h2 { font-size: clamp(2rem, 3.5vw, 3.4rem); font-weight: 600; line-height: 1.3; letter-spacing: -.045em; }
+	h2 a { color: var(--text); text-decoration: none; }
+	h2 a:hover { color: var(--accent); }
+	.featured-content > p { margin-top: 1.3rem; color: var(--muted); font-size: .95rem; line-height: 1.9; }
+	.featured-meta { display: flex; gap: .55rem; margin: 1.5rem 0 1.8rem; color: var(--muted); font-family: var(--font-serif); font-size: .72rem; }
+	@media (max-width: 800px) { .featured { grid-template-columns: 1fr; gap: 1.8rem; } .featured-content { max-width: 42rem; } h2 { font-size: clamp(1.85rem, 7vw, 2.7rem); } }
+</style>

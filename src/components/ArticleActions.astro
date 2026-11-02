@@ -1,0 +1,31 @@
+---
+interface Props { title: string; }
+const { title } = Astro.props;
+---
+<div class="article-actions" data-pagefind-ignore>
+	<button type="button" data-share data-title={title}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5m-7.6 6.9 7.6 4.5"/></svg>分享</button>
+	<button type="button" data-copy-link><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/></svg>复制链接</button>
+	<span class="action-status" role="status" aria-live="polite"></span>
+</div>
+<script>
+	const status = document.querySelector('.action-status');
+	const notify = (message: string) => { if (status) { status.textContent = message; setTimeout(() => { status.textContent = ''; }, 2500); } };
+	const copy = async () => {
+		try { await navigator.clipboard.writeText(location.href); notify('链接已复制'); }
+		catch { notify('复制失败，请从地址栏复制'); }
+	};
+	document.querySelector('[data-copy-link]')?.addEventListener('click', copy);
+	const share = document.querySelector<HTMLButtonElement>('[data-share]');
+	if (!navigator.share && share) share.hidden = true;
+	share?.addEventListener('click', async () => {
+		try { await navigator.share({ title: share.dataset.title, url: location.href }); }
+		catch (error) { if ((error as Error).name !== 'AbortError') await copy(); }
+	});
+</script>
+<style>
+	.article-actions { display: flex; align-items: center; gap: .6rem; }
+	button { display: inline-flex; align-items: center; gap: .45rem; min-height: 42px; padding: .45rem .8rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: transparent; color: var(--muted); font-size: .75rem; cursor: pointer; }
+	button:hover { border-color: var(--accent); color: var(--accent); }
+	svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.4; }
+	.action-status { color: var(--accent); font-size: .72rem; }
+</style>

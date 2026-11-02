@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { tags } from '../../config/taxonomy';
+import { getPublishedPosts } from '../../lib/content';
+const posts = await getPublishedPosts();
+---
+<BaseLayout title="文章标签" description="通过更细致的主题标签发现相关文章。">
+	<header class="page-hero shell"><div><p class="eyebrow">INDEX</p><h1>文章标签</h1></div><p>标签跨越分类，连接那些讨论同一问题的文章。</p></header>
+	<nav class="shell tag-cloud" aria-label="全部标签">{tags.map((tag) => <a href={`/tags/${tag.slug}/`}><span>#{tag.name}</span><small>{posts.filter((post) => post.data.tags.includes(tag.slug)).length}</small></a>)}</nav>
+</BaseLayout>
+<style>.tag-cloud { display: flex; flex-wrap: wrap; gap: .8rem; padding-top: 3rem; } .tag-cloud a { display: flex; gap: .8rem; padding: .7rem 1rem; border: 1px solid var(--line); color: var(--text); font-size: .85rem; text-decoration: none; } .tag-cloud a:hover { border-color: var(--accent); color: var(--accent); } small { color: var(--muted); }</style>

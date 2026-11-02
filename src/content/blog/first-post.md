@@ -1,16 +1,47 @@
 ---
-title: 'First post'
-description: 'Lorem ipsum dolor sit amet'
-pubDate: 'Jul 08 2022'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+title: '把复杂问题写清楚'
+description: '写作不是把想法包装得更复杂，而是为混乱建立秩序。这里提供一套从观察到表达的通用练习。'
+pubDate: '2026-10-26'
+category: 'reading'
+tags: ['writing', 'critical-thinking']
+cover: '../../assets/blog-placeholder-3.jpg'
+coverAlt: '桌面上的纸张与书写工具'
+author: 'Jeff'
+demo: true
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
+> 这是一篇用于展示博客版式的示例文章，不代表作者的真实项目经历。
 
-Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc. Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra massa massa ultricies mi.
+复杂的题目往往不是因为信息太少，而是因为信息同时涌来，没有先后，也没有边界。写作提供了一种慢下来的方法：把脑中的纠缠放到纸面上，再逐项辨认。
 
-Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
+## 先找到真正的问题
 
-Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id cursus metus aliquam eleifend mi.
+我们很容易从答案开始。一个工具、一套流程、一种新方法，看起来都足够诱人。但如果问题尚未被准确描述，答案越具体，偏离就可能越远。
 
-Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
+可以先写下三句话：
+
+1. 现在发生了什么？
+2. 其中哪一部分最不理想？
+3. 如果只能改变一件事，它会是什么？
+
+这三句话不构成完整分析，却能帮助我们暂时离开模糊的不安。
+
+## 给材料建立层次
+
+记录并不等于理解。面对一组材料，可以区分事实、解释与判断：事实是可以核对的观察，解释是因果假设，判断则包含价值取向。
+
+> 清晰的表达，不是省略复杂性，而是让复杂性各就其位。
+
+当三者被混在一起时，讨论容易变成立场碰撞；当它们被分别呈现，分歧才有机会落到具体之处。
+
+## 用读者检验表达
+
+一篇文章是否清楚，不取决于作者投入了多少时间，而取决于读者能否 reconstruct 其中的思路。写完以后，可以删去不影响理解的形容词，把过长的句子拆开，并为每一次转折补上理由。
+
+### 一个简短的自检
+
+- 第一段是否说明了文章要处理什么？
+- 每个小节是否只承担一个主要任务？
+- 结论是否回应了开头，而不是引入新的话题？
+
+写清楚并不意味着给出最终答案。有时，准确地说出“仍然不知道什么”，本身就是一种可靠的进展。

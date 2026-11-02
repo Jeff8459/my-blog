@@ -1,0 +1,39 @@
+---
+import { Image } from 'astro:assets';
+import type { BlogPost } from '../lib/content';
+import { getCategory } from '../config/taxonomy';
+import { getReadingTime } from '../lib/reading-time';
+import FormattedDate from './FormattedDate.astro';
+interface Props { post: BlogPost; index?: number; }
+const { post, index } = Astro.props;
+const cover = post.data.cover ?? post.data.heroImage;
+const category = getCategory(post.data.category);
+---
+<article class="article-row">
+	{index !== undefined && <span class="row-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>}
+	<div class="row-content">
+		<div class="row-kicker"><a href={`/categories/${category.slug}/`}>{category.name}</a>{post.data.demo && <span class="demo-label">示例</span>}</div>
+		<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+		<p>{post.data.description}</p>
+		<div class="row-meta"><FormattedDate date={post.data.pubDate} /><span>·</span><span>{getReadingTime(post.body)} 分钟阅读</span></div>
+	</div>
+	<a class="row-image" href={`/blog/${post.id}/`} tabindex="-1" aria-hidden="true">
+		{cover && <Image src={cover} alt="" width={400} height={280} loading="lazy" />}
+	</a>
+</article>
+<style>
+	.article-row { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) 210px; gap: clamp(1.2rem, 3vw, 2.8rem); align-items: center; padding: 2.3rem 0; border-bottom: 1px solid var(--line); }
+	.row-index { align-self: start; padding-top: .25rem; color: var(--muted); font-family: var(--font-serif); font-size: .72rem; }
+	.row-kicker { display: flex; align-items: center; gap: .6rem; margin-bottom: .5rem; }
+	.row-kicker a { color: var(--accent); font-size: .68rem; font-weight: 600; letter-spacing: .08em; text-decoration: none; }
+	h2 { font-size: clamp(1.25rem, 2vw, 1.65rem); }
+	h2 a { color: var(--text); text-decoration: none; }
+	h2 a:hover { color: var(--accent); }
+	.row-content > p { max-width: 650px; margin-top: .65rem; color: var(--muted); font-size: .85rem; }
+	.row-meta { display: flex; gap: .5rem; margin-top: .9rem; color: var(--muted); font-family: var(--font-serif); font-size: .7rem; }
+	.row-image { aspect-ratio: 10 / 7; overflow: hidden; background: var(--image-bg); }
+	.row-image img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.75); transition: filter .2s; }
+	.row-image:hover img { filter: saturate(1); }
+	@media (max-width: 600px) { .article-row { grid-template-columns: minmax(0, 1fr) 96px; gap: 1rem; padding: 1.7rem 0; } .row-index { display: none; } .row-content > p { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; } .row-image { align-self: start; margin-top: 1.6rem; } .row-meta { flex-wrap: wrap; } }
+	@media (max-width: 390px) { .article-row { grid-template-columns: 1fr; } .row-image { display: none; } }
+</style>

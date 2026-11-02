@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://my-blog-2hf.pages.dev/sitemap-index.xml

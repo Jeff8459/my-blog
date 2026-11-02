@@ -1,31 +1,39 @@
 ---
-title: 'Using MDX'
-description: 'Lorem ipsum dolor sit amet'
-pubDate: 'Jun 01 2024'
-heroImage: '../../assets/blog-placeholder-5.jpg'
+title: '用 MDX 扩展文章表达能力'
+description: '在 Markdown 的简洁与组件的表达力之间取得平衡，让内容仍然易写、易读、易维护。'
+pubDate: '2026-10-18'
+category: 'technology'
+tags: ['astro', 'markdown', 'writing']
+cover: '../../assets/blog-placeholder-5.jpg'
+coverAlt: '屏幕与代码构成的抽象画面'
+author: 'Jeff'
+demo: true
 ---
 
-This theme comes with the [@astrojs/mdx](https://docs.astro.build/en/guides/integrations-guide/mdx/) integration installed and configured in your `astro.config.mjs` config file. If you prefer not to use MDX, you can disable support by removing the integration from your config file.
+> 这是一篇用于展示博客功能的示例文章。站点已保留 MDX 支持，但日常写作优先使用普通 Markdown。
 
-## Why MDX?
+MDX 允许在 Markdown 中嵌入组件。它适合真正需要交互或结构化展示的内容，而不是替代所有文章写作方式。
 
-MDX is a special flavor of Markdown that supports embedded JavaScript & JSX syntax. This unlocks the ability to [mix JavaScript and UI Components into your Markdown content](https://docs.astro.build/en/guides/integrations-guide/mdx/#mdx-in-astro) for things like interactive charts or alerts.
+## 为什么保留 Markdown
 
-If you have existing content authored in MDX, this integration will hopefully make migrating to Astro a breeze.
+纯文本具有很长的生命周期。标题、列表、引用和代码块不依赖特定前端框架，也便于版本管理。对大多数文章而言，Markdown 已经足够。
 
-## Example
+```md
+## 一个小节
 
-Here is how you import and use a UI component inside of MDX.  
-When you open this page in the browser, you should see the clickable button below.
+普通文字、**重点**与[链接](https://astro.build)。
+```
 
-import HeaderLink from '../../components/HeaderLink.astro';
+## 什么时候使用 MDX
 
-<HeaderLink href="#" onclick="alert('clicked!')">
-	Embedded component in MDX
-</HeaderLink>
+当内容需要复用站点组件，或需要展示无法由标准 Markdown 表达的结构时，MDX 才有明显价值。
 
-## More Links
+1. 可交互的数据展示；
+2. 需要统一样式的提示模块；
+3. 在同一篇文章中重复出现的复杂结构。
 
-- [MDX Syntax Documentation](https://mdxjs.com/docs/what-is-mdx)
-- [Astro Usage Documentation](https://docs.astro.build/en/basics/astro-pages/#markdownmdx-pages)
-- **Note:** [Client Directives](https://docs.astro.build/en/reference/directives-reference/#client-directives) are still required to create interactive components. Otherwise, all components in your MDX will render as static HTML (no JavaScript) by default.
+## 保持内容可维护
+
+组件越多，文章与代码的耦合越强。新增组件前，可以先问：这段内容是否仍能脱离组件被理解？构建失败时，是否能快速定位？
+
+技术选择的目的不是展示能力，而是让表达更准确，同时把长期维护成本留在可接受的范围内。

@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import ArticleRow from '../../../../components/ArticleRow.astro';
+import CategoryNavigation from '../../../../components/CategoryNavigation.astro';
+import Pagination from '../../../../components/Pagination.astro';
+import { getPublishedPosts, paginate } from '../../../../lib/content';
+import { site } from '../../../../config/site';
+
+export async function getStaticPaths() {
+	const posts = await getPublishedPosts();
+	const pageCount = Math.ceil(posts.length / site.postsPerPage);
+	return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({ params: { page: String(index + 2) } }));
+}
+const posts = await getPublishedPosts();
+const pageNumber = Number(Astro.params.page);
+const page = paginate(posts, pageNumber, site.postsPerPage);
+---
+<BaseLayout title={`文章归档 · 第 ${pageNumber} 页`} description={`文章归档第 ${pageNumber} 页，共 ${posts.length} 篇文章。`}>
+	<header class="page-hero shell"><div><p class="eyebrow">THE ARCHIVE</p><h1>文章归档</h1></div><div><span class="page-count">PAGE {String(pageNumber).padStart(2, '0')}</span><p>按时间顺序保存每一次思考。</p></div></header>
+	<div class="shell archive-controls"><CategoryNavigation /></div>
+	<section class="shell archive-list" aria-label={`文章第 ${pageNumber} 页`}>
+		{page.items.map((post, index) => <ArticleRow post={post} index={(page.page - 1) * site.postsPerPage + index} />)}
+		<Pagination page={page.page} pageCount={page.pageCount} />
+	</section>
+</BaseLayout>
+<style>.archive-controls { margin-top: 2rem; } .archive-list { padding-top: 1.5rem; }</style>

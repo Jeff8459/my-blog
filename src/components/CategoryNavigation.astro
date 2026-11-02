@@ -1,0 +1,20 @@
+---
+import { categories } from '../config/taxonomy';
+import { getPublishedPosts } from '../lib/content';
+const posts = await getPublishedPosts();
+---
+<nav class="category-nav" aria-label="文章分类">
+	{categories.map((category) => {
+		const count = posts.filter((post) => post.data.category === category.slug).length;
+		return <a href={`/categories/${category.slug}/`}><span>{category.name}</span><small>{String(count).padStart(2, '0')}</small></a>;
+	})}
+</nav>
+<style>
+	.category-nav { display: flex; flex-wrap: wrap; border-block: 1px solid var(--line); }
+	a { display: flex; align-items: center; gap: .6rem; min-height: 52px; padding: 0 1.3rem; border-right: 1px solid var(--line); color: var(--muted); font-size: .78rem; text-decoration: none; }
+	a:first-child { padding-left: 0; }
+	a:last-child { border-right: 0; }
+	a:hover { color: var(--accent); }
+	small { color: var(--muted); font-family: var(--font-serif); font-size: .62rem; }
+	@media (max-width: 600px) { .category-nav { display: grid; grid-template-columns: repeat(2, 1fr); } a, a:first-child { padding: 0 .5rem; border-right: 0; border-bottom: 1px solid var(--line); } a:nth-last-child(-n+2) { border-bottom: 0; } }
+</style>

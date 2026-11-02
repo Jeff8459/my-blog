@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { categories } from '../../config/taxonomy';
+import { getPublishedPosts } from '../../lib/content';
+const posts = await getPublishedPosts();
+---
+<BaseLayout title="文章分类" description="按人工智能、技术实践、管理思考、阅读与思考、生活随笔浏览文章。">
+	<header class="page-hero shell"><div><p class="eyebrow">SECTIONS</p><h1>文章分类</h1></div><p>分类是稳定的内容入口。选择一个方向，查看这个主题下的全部文字。</p></header>
+	<section class="shell category-grid" aria-label="全部分类">
+		{categories.map((category, index) => {
+			const count = posts.filter((post) => post.data.category === category.slug).length;
+			return <a href={`/categories/${category.slug}/`}><div class="category-top"><span>{String(index + 1).padStart(2, '0')}</span><small>{count} 篇文章</small></div><h2>{category.name}</h2><p>{category.description}</p><span class="category-link">进入分类 →</span></a>;
+		})}
+	</section>
+</BaseLayout>
+<style>
+	.category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 3rem; }
+	.category-grid > a { min-height: 280px; padding: 2.2rem; border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none; }
+	.category-grid > a:nth-child(odd) { border-right: 1px solid var(--line); }
+	.category-grid > a:hover { background: var(--surface); }
+	.category-top { display: flex; justify-content: space-between; color: var(--muted); font-family: var(--font-serif); font-size: .68rem; }
+	h2 { margin-top: 2.8rem; font-size: 1.8rem; }
+	p { margin-top: .8rem; color: var(--muted); font-size: .85rem; }
+	.category-link { display: block; margin-top: 2rem; color: var(--accent); font-size: .75rem; }
+	@media (max-width: 600px) { .category-grid { grid-template-columns: 1fr; } .category-grid > a { min-height: 230px; padding: 1.8rem 0; } .category-grid > a:nth-child(odd) { border-right: 0; } h2 { margin-top: 2rem; } }
+</style>
