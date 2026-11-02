@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="publisher-token" content="__PUBLISHER_TOKEN__" />
+		<meta name="robots" content="noindex,nofollow" />
+		<title>Notes 发布中心</title>
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="stylesheet" href="/site.css" />
+		<link rel="stylesheet" href="/app.css" />
+		<script type="module" src="/app.js"></script>
+	</head>
+	<body>
+		<a class="skip-link" href="#view">跳到主要内容</a>
+		<header class="publisher-header">
+			<a class="publisher-brand" href="#/"><span class="brand-badge">P</span><strong>Notes Publisher</strong><small>LOCAL</small></a>
+			<nav class="publisher-nav" aria-label="发布中心导航">
+				<a href="#/">文章</a><a href="#/new">新建</a><a href="#/import">导入 Obsidian</a><a href="#/archives">归档</a><a href="#/history">发布历史</a>
+			</nav>
+			<div class="header-state"><span class="local-indicator"><i></i>127.0.0.1</span><span data-git-header>读取 Git…</span><button class="icon-button" type="button" data-theme-toggle aria-label="切换深浅色">◐</button></div>
+		</header>
+		<div class="publisher-layout">
+			<aside class="publisher-sidebar" aria-label="文章快捷入口">
+				<p class="side-label">WORKSPACE</p>
+				<nav class="side-nav"><a href="#/" data-nav="dashboard"><span>文章管理</span></a><a href="#/new" data-nav="new"><span>新建文章</span></a><a href="#/import" data-nav="import"><span>导入 Obsidian</span></a><a href="#/archives" data-nav="archives"><span>归档与恢复</span></a><a href="#/history" data-nav="history"><span>发布历史</span></a></nav>
+				<div class="side-section"><p class="side-label">QUICK START</p><ol><li>新建或导入笔记</li><li>编辑并实时预览</li><li>运行发布检查</li><li>确认提交并推送</li></ol></div>
+				<div class="side-footer"><a data-site-link href="https://my-blog-2hf.pages.dev/" target="_blank" rel="noopener">打开线上博客 ↗</a><span>关闭：终端 Ctrl+C</span><span>内容目录：src/content/blog</span></div>
+			</aside>
+			<main id="view" tabindex="-1"><div class="loading-state">正在连接本地发布中心…</div></main>
+		</div>
+		<nav class="publisher-mobile-nav" aria-label="移动端发布中心导航">
+			<a href="#/" data-nav="dashboard">文章</a><a href="#/new" data-nav="new">新建</a><a href="#/import" data-nav="import">导入</a><a href="#/archives" data-nav="archives">归档</a><a href="#/history" data-nav="history">历史</a>
+		</nav>
+		<div class="toast" role="status" aria-live="polite" data-toast></div>
+	</body>
+</html>

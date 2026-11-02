@@ -16,6 +16,7 @@ interface Props {
 	modifiedTime?: Date;
 	noindex?: boolean;
 	pagefind?: boolean;
+	revision?: string;
 }
 
 const { pagefind = false, ...seo } = Astro.props;

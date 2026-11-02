@@ -1,4 +1,5 @@
 ---
+import { createHash } from 'node:crypto';
 import type { BlogPost } from '../lib/content';
 import { getCategory, getTag } from '../config/taxonomy';
 import { getReadingTime } from '../lib/reading-time';
@@ -22,6 +23,7 @@ const { post, headings, newer, older, related, backlinks } = Astro.props;
 const { data } = post;
 const cover = data.cover ?? data.heroImage;
 const category = getCategory(data.category);
+const revision = createHash('sha256').update((post.body ?? '').trim()).digest('hex');
 ---
 <BaseLayout
 	title={data.seoTitle ?? data.title}
@@ -31,6 +33,7 @@ const category = getCategory(data.category);
 	publishedTime={data.pubDate}
 	modifiedTime={data.updatedDate}
 	pagefind={true}
+	revision={revision}
 >
 	<ReadingProgress />
 	<article class="post">

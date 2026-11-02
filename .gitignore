@@ -1,6 +1,9 @@
 # local WorkBuddy data
 .workbuddy/
 
+# local publisher state: backups, history and generated client bundle
+.publisher/
+
 # build output
 dist/
 # generated types

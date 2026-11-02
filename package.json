@@ -11,6 +11,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "test:smoke": "playwright test",
+    "test:publisher": "node --test tools/publisher/test/*.test.mjs",
+    "publisher": "node tools/publisher/server.mjs",
     "astro": "astro"
   },
   "dependencies": {
@@ -22,7 +24,13 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@codemirror/lang-markdown": "^6.5.2",
     "@playwright/test": "^1.64.1",
+    "codemirror": "^6.0.2",
+    "diff": "^9.0.0",
+    "esbuild": "^0.28.2",
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^15.0.3",
     "pagefind": "^1.6.0",
     "typescript": "^6.0.3"
   }

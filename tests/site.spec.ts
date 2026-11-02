@@ -21,6 +21,7 @@ test('文章阅读器包含目录、代码复制、相关文章与 SEO', async (
 	await expect(page.locator('.context-aside')).toBeVisible();
 	expect(await page.locator('script[type="application/ld+json"]').textContent()).toContain('BlogPosting');
 	await expect(page.locator('meta[property="article:published_time"]')).toHaveCount(1);
+	await expect(page.locator('meta[name="article-revision"]')).toHaveAttribute('content', /^[a-f0-9]{64}$/);
 	await page.locator('.code-copy').first().click();
 	await expect(page.locator('.code-copy').first()).toHaveText('已复制');
 });

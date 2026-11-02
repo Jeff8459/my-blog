@@ -1,6 +1,6 @@
 # 拔女孩的小萝卜 · NOTES
 
-> 交付时间：2026-11-02 15:24
+> 交付时间：2026-11-02 22:59
 
 一个极简、紧凑的中文数字花园。采用桌面三栏知识工作台布局，支持站内双向链接、反向链接、分类、标签、专题、中文搜索、深浅色主题、RSS、Sitemap 与 SEO。
 
@@ -14,6 +14,7 @@
 - **Pagefind 1.6**：构建后生成静态中文全文索引。
 - **原生 Astro、CSS、TypeScript 与少量 JavaScript**：未引入前端 UI 框架。
 - **Cloudflare Pages**：构建命令 `npm run build`，输出目录 `dist`。
+- **本地发布中心**：独立 Node 服务，CodeMirror + Markdown-it，不进入生产站点。
 
 ```text
 src/
@@ -25,6 +26,9 @@ src/
 ├── lib/               # 内容查询、双向链接图、日期、阅读时长
 ├── pages/             # 全部静态路由
 └── styles/global.css  # Design Tokens 与正文排版
+
+tools/publisher/        # 仅本机运行的文章发布中心
+PUBLISHER.command       # macOS 一键启动脚本
 ```
 
 ## 2. 本地启动
@@ -145,6 +149,8 @@ npm run check       # Astro / TypeScript 检查
 npm run build       # 静态页面、图片、Sitemap、Pagefind
 npm run preview     # 预览 dist，默认 http://127.0.0.1:4321
 npm run test:smoke  # 需先启动 preview；真实 Chrome 验收
+npm run publisher   # 本地发布中心，http://127.0.0.1:4322
+npm run test:publisher # 发布中心单元、API 与浏览器测试
 ```
 
 浏览器测试默认使用 macOS 系统 Chrome；可通过 `CHROME_PATH` 指定浏览器，通过 `TEST_BASE_URL` 指定预览地址。
@@ -170,6 +176,18 @@ git push -u origin feature/digital-garden
 - **线上 canonical 不正确**：同步修改 `astro.config.mjs` 与 `src/config/site.ts`。
 - **测试无法启动 Chrome**：设置 `CHROME_PATH`，或安装 Playwright Chromium。
 
-## 14. 验收边界
+## 14. 本地发布中心
+
+日常写作与发布推荐使用本地工具：
+
+```bash
+npm run publisher
+```
+
+或双击项目根目录的 `PUBLISHER.command`。服务只监听 `127.0.0.1:4322`，支持新建草稿、CodeMirror 编辑、实时预览、自动保存与备份、图片插入、Obsidian 导入、发布检查、受限 Git 提交、部署核验，以及归档与恢复（两者同样经过构建、确认、推送和线上核验，可随时取消还原）。
+
+详细操作、安全机制、失败恢复与测试说明见 [`tools/publisher/README.md`](tools/publisher/README.md)。发布中心不会被 Astro 构建到 `dist`，线上博客没有对应管理路由。
+
+## 15. 验收边界
 
 已自动检查类型、构建、Pagefind 索引、主要路由、站内链接与反向链接、快捷搜索、主题、移动抽屉、404、RSS/Sitemap、三栏断点及 360–1440px 横向溢出，并实际查看 390、768、1440px 与深色截图。屏幕阅读器、全部浏览器及完整 WCAG 2.2 AA 仍需人工审计。

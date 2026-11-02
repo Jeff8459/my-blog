@@ -1,15 +1,16 @@
 ---
-title: '人工智能时代，如何保留判断力'
-description: '当生成答案越来越容易，真正重要的也许是提出问题、核验信息与承担判断的责任。'
-pubDate: '2026-10-28'
-updatedDate: '2026-10-30'
-category: 'ai'
-tags: ['artificial-intelligence', 'critical-thinking']
-cover: '../../assets/blog-placeholder-4.jpg'
-coverAlt: '明暗交错的抽象建筑结构'
+title: "人工智能时代，如何保留判断力"
+description: "当生成答案越来越容易，真正重要的也许是提出问题、核验信息与承担判断的责任。"
+pubDate: "2026-10-28"
+updatedDate: "2026-11-02"
+category: "ai"
+tags: ["artificial-intelligence","critical-thinking"]
+cover: "../../assets/blog-placeholder-4.jpg"
+coverAlt: "明暗交错的抽象建筑结构"
 featured: true
-author: 'Jeff'
+draft: false
 demo: true
+author: "Jeff"
 ---
 
 > 这是一篇用于展示博客版式的示例文章，内容仅为通用观点，不构成专业建议。
