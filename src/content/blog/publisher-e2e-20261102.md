@@ -12,7 +12,7 @@ demo: false
 
 这是一段用于端到端验收的普通正文，用来确认段落、行内代码（如 `npm run build`）与中文排版是否正常。
 
-E2E-PUBLISH-V1-20261102
+E2E-PUBLISH-V2-20261102
 
 ## 一、发布链路概览
 
@@ -44,4 +44,6 @@ npm run preview
 
 ![publisher-e2e](../../assets/publisher/publisher-e2e-20261102/publisher-e2e.png)
 
-最后再次记录本次唯一标记：E2E-PUBLISH-V1-20261102。
+更新测试新增段落：本次修改用于确认同一篇文章可以原地更新，slug 与文章地址保持不变，且不会产生重复文章。
+
+最后再次记录本次唯一标记：E2E-PUBLISH-V2-20261102。
